@@ -7,7 +7,8 @@ from litellm import completion
 
 MODELS = [
     "openai/gpt-4o-mini",
-    "deepseek/deepseek-chat"
+    "deepseek/deepseek-chat",
+    "gemini/gemini-2.5-flash"
 ]
 
 QUESTIONS_FILE = "questions.txt"
