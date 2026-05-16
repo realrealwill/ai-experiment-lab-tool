@@ -17,9 +17,11 @@ def call_model(prompt, model, max_retries=3, sleep_seconds=2):
                     {
                         "role": "system",
                         "content": (
-                            "You are a careful evaluator. "
-                            "Return only valid JSON with no extra text, explanations, or comments."
-                            "carefully follow the instructions in the prompt and do not deviate from them."
+                             "You are a careful evaluator. "
+                             "Return only valid JSON. "
+                             "Do not include any extra text, explanations, comments, or markdown. "
+                             "Do not use code fences such as ```json. "
+                             "Follow the prompt instructions exactly and do not deviate from them."
                         ),
                     },
                     {

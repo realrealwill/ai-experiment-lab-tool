@@ -1,6 +1,6 @@
 import random
 
-def shuffle(df):
+def shuffle(df, random_state=None):
     shuffled_df = df.sample(frac=1).reset_index(drop=True)
 
     # pair_id  String version of term_pair_id, formatted as "pair_001", "pair_002", etc. for the prompt use.
@@ -31,20 +31,18 @@ def build_prompt(shuffled_df, run_uuid):
     - Score 0 (Nonsense/Incorrect): The two words are unrelated, randomly paired, or rely on uninformative generic words without forming a distinct topic, or fail to give a particular statistical meaning though they can appear together.
 
     OUTPUT FORMAT:
-    You must output ONLY a strictly valid JSON array of objects.
-    Do not include any markdown formatting, explanations, or conversational text.
-    The first character of your response must be "[" and the last character must be "]".
+    You must output EXACTLY 71 items without duplication. You must output ONLY a strictly valid JSON array of objects.
+    Do not include any markdown formatting, explanations, or conversational text. 
+    CRITICAL INSTRUCTION: You must evaluate and output the pairs in the EXACT SAME ORDER they appear in the input list below, do not miss any pairs. Do not sort them alphabetically. No ```json or any other formatting, just the raw JSON array.
 
-    Each object must have exactly this format:
-    {{"id": "pair_001", "label": 1}}
 
-    CRITICAL INSTRUCTIONS:
-    - Evaluate and output the pairs in the EXACT SAME ORDER they appear in the input list below.
-    - Do not sort them alphabetically.
-    - Do not skip any pair.
-    - The output must contain the SAME NUMBER of items as the input list.
-    - The label must be an integer: 0 or 1.
-    - Judge each pair independently.
+    EXAMPLE EXPECTED OUTPUT:
+    [
+        {{"id": "pair_042", "label": 1}},
+        {{"id": "pair_007", "label": 0}},
+        {{"id": "pair_103", "label": 1}}
+    ]
+
 
     [System Run ID: {run_uuid}]
 
