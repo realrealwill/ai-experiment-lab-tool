@@ -1,7 +1,9 @@
 from loader import load_data
 from prompt import build_prompt, shuffle
 from api import call_model
-from parser import parse_response, build_run_result
+from parser import validate, parse_response, build_run_result
+import json
+import time
 
 import uuid
 import pandas as pd
@@ -15,7 +17,8 @@ MODELS = [
     # "anthropic/claude-haiku-4-5"
 ]
 
-RUNS = 1000
+RUNS = 5
+MAX_RETRIES = 3
 
 name_map = {
     "openai/gpt-5.1-chat-latest": "OpenAI",
@@ -55,7 +58,28 @@ def main():
             # print(response)
             # print()
 
-            parsed = parse_response(response)
+            parsed = None
+
+            for attempt in range(1, MAX_RETRIES + 1):
+                print(f"Attempt {attempt}/{MAX_RETRIES}")
+
+                response = call_model(prompt, model=mod)
+
+                try:
+                    parsed = parse_response(response)
+                except json.JSONDecodeError as e:
+                    print("JSON parse failed:", e)
+                    time.sleep(2)
+                    continue
+
+                is_valid, message = validate(parsed, shuffled_df)
+
+                if is_valid:
+                    #print("Valid response.")
+                    break
+
+                print("Invalid response:", message)
+                time.sleep(2)
 
             # at run_id, the specific model's result
             run_result_df = build_run_result(
@@ -86,7 +110,7 @@ def main():
             .rename(columns={"binary_label": "avg_score"})
         )
         print("Item-level average scores:")
-        print(item_level.head)
+        print(item_level.head())
 
 
         ### Transition Matrix ###
@@ -127,7 +151,7 @@ def main():
             plt.title(f"Position Bias Curve")
             plt.xlabel("Prompt Position")
             plt.ylabel("Average Score")
-            plt.ylim(0, 1.2)  # using the same range
+            plt.ylim(-0.05, 1.05)  # using the same range
             plt.legend()
             plt.grid(True, alpha=0.3)
             plt.tight_layout()
