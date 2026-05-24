@@ -3,7 +3,6 @@ from statistics import run_statistics
 
 
 def main():
-    run_experiment()
     run_statistics()
 
 

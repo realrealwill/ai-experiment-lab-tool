@@ -15,8 +15,8 @@ MODELS = [
     # "anthropic/claude-haiku-4-5"
 ]
 
-TOTAL_RUNS = 10
-BATCH_SIZE = 5
+TOTAL_RUNS = 1000
+BATCH_SIZE = 200
 MAX_RETRIES = 3
 OUTPUT_DIR = "outputs"
 
@@ -53,6 +53,7 @@ def run_experiment(
     #===============================================================
 
     num_batches = total_runs // batch_size  # 5 batches, 200 runs each
+    failed_res = [] # recording failed runs to rerun
 
     for batch_id in range(1, num_batches+1):  # 5 Iters
         batch_start = (batch_id - 1) * batch_size + 1
@@ -62,9 +63,8 @@ def run_experiment(
         print(f"========== BATCH {batch_id}/{num_batches}: RUN {batch_start} to {batch_end} ==========")
         
         batch_res = [] # recording the result of each batch
-        failed_res = [] # recording failed runs to rerun
         for run_id in range(batch_start, batch_end+1):  # 200 Iters
-            print(f"========== RUN {run_id}/{TOTAL_RUNS} ==========")
+            print(f"========== RUN {run_id}/{total_runs} ==========")
             shuffled_df = shuffled_runs[run_id]
             run_uuid = f"run_{run_id}"
             prompt = build_prompt(shuffled_df, run_uuid) # build prompt
@@ -121,12 +121,16 @@ def run_experiment(
         else:
             print(f"No valid results collected for batch {batch_id}.")
 
-        if failed_res:
-            failed_df = pd.DataFrame(failed_res)
-            failed_path = f"{output_dir}/failed_batch_{batch_id}_runs_{batch_start}_to_{batch_end}.csv"
-            failed_df.to_csv(failed_path, index=False)
-
-            print(f"Saved failed records to {failed_path}")
+    #==================================================================
+    # failed results
+    #==================================================================
+    if failed_res:
+        failed_df = pd.DataFrame(failed_res)
+        failed_path = f"{output_dir}/failed_runs.csv"
+        failed_df.to_csv(failed_path, index=False)
+        print(f"Saved all failed records to {failed_path}")
+    else:
+        print("No failed run/model pairs.")
 
     #==================================================================
     # Merge all 5 batches into final_df
@@ -159,5 +163,6 @@ def run_experiment(
     else:
         print("No valid batch results were collected.")
         return None
-
-
+    
+if __name__ == "__main__":
+    run_experiment()

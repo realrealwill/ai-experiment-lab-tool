@@ -3,7 +3,9 @@ import matplotlib.pyplot as plt
 import os
 
 
-OUTPUT_DIR = "outputs"
+OUTPUT_DIR = "results"
+DATA_DIR = "outputs"
+
 name_map = {
     "openai/gpt-5.1-chat-latest": "OpenAI",
     "deepseek/deepseek-chat": "DeepSeek",
@@ -11,8 +13,10 @@ name_map = {
     "anthropic/claude-haiku-4-5": "Claude"
 }
 
-def run_statistics(output_dir = OUTPUT_DIR):
-    final_path = f"{output_dir}/final_flat_dataset.csv"
+def run_statistics(data_dir=DATA_DIR, output_dir = OUTPUT_DIR):
+    os.makedirs(output_dir, exist_ok=True)
+
+    final_path = f"{data_dir}/final_flat_dataset_merged.csv"
     if not os.path.exists(final_path):
         print(f"Cannot find {final_path}. Please run experiment first.")
         return None
@@ -88,8 +92,65 @@ def run_statistics(output_dir = OUTPUT_DIR):
         plt.savefig(figure_path, dpi=300)
 
         plt.show()
+
+    ### Three stage position average ###
+    # divide 71 positions to three stages
+    # Early 1-24, middle 25-48, Late:49-71
+
+    final_df["group_pos"] = pd.cut(
+        final_df["prompt_position"],
+        bins = [0, 24, 48, 71],
+        labels = ["Early(1-24)", "Middle(25-48)", "Late(49-71)"],
+        include_lowest = True
+    )
+
+    group_pos_avg = (
+        final_df.groupby(["model_name", "group_pos"], observed = False)["binary_label"]
+        .mean()
+        .reset_index()
+        .rename(columns = {"binary_label": "avg_score"})
+    )
+
+    group_pos_path = f"{output_dir}/group_position_average_scores.csv"
+    group_pos_avg.to_csv(group_pos_path, index = False)
+
+    print("Stage average:")
+    print(group_pos_avg)
+    print(f"saved to {group_pos_path}")
+
+    ### plot ###
+    for model_name, model_df in group_pos_avg.groupby("model_name"):
+        plt.figure(figsize=(8, 5))
+
+        bars = plt.bar(
+            model_df["group_pos"].astype(str),
+            model_df["avg_score"],
+            label = name_map.get(model_name, model_name)
+        )
+
+        plt.bar_label(bars, fmt="%.3f", padding=3)
+
+        plt.title(f"Three stage positional average - {name_map.get(model_name, model_name)}")
+        plt.xlabel("Prompt Position Group") 
+        plt.ylabel("Average Score")
+        plt.ylim(0, 1)
+        plt.grid(True, axis="y", alpha=0.3)
+        plt.legend()
+        plt.tight_layout()
+        safe_model_name = name_map.get(model_name, model_name).replace("/", "_")
+        figure_path = f"{output_dir}/group_position_{safe_model_name}.png"
+        plt.savefig(figure_path, dpi=300)
+
+        plt.show()
+
+        print(f"Saved three-stage bar chart to {figure_path}")
+
+
     
     return {
         "item_level": item_level,
         "position_bias": position_bias
     }
+
+if __name__ == "__main__":
+    run_statistics()
