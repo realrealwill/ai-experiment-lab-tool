@@ -1,0 +1,12 @@
+timestamp,model,question_id,question,answer,error
+2026-02-23T13:13:09,openai/gpt-4o-mini,1,Introduce yourself in one sentence.,I am an AI language model designed to assist and provide information on a wide range of topics.,
+2026-02-23T13:13:11,deepseek/deepseek-chat,1,Introduce yourself in one sentence.,"I am DeepSeek, an AI assistant created by DeepSeek Company, here to provide you with helpful, detailed, and thoughtful responses.",
+2026-02-23T13:13:17,gemini/gemini-2.5-flash,1,Introduce yourself in one sentence.,"I am a large language model, trained by Google, designed to assist with a wide range of information and creative tasks.",
+2026-02-23T13:13:19,openai/gpt-4o-mini,2,Explain Bayes rule in one sentence.,"Bayes' rule is a mathematical formula that describes how to update the probability of a hypothesis based on new evidence, combining prior knowledge with the likelihood of observed data.",
+2026-02-23T13:13:20,deepseek/deepseek-chat,2,Explain Bayes rule in one sentence.,"Bayes' rule updates the probability of a hypothesis as new evidence is acquired, by multiplying the prior probability by the likelihood of the evidence given the hypothesis, then normalizing.",
+2026-02-23T13:13:26,gemini/gemini-2.5-flash,2,Explain Bayes rule in one sentence.,Bayes' Rule updates your belief in a hypothesis by combining your prior belief with the likelihood of observing new evidence if that hypothesis were true.,
+2026-02-23T13:13:28,openai/gpt-4o-mini,3,Explain DFS and BFS in one sentence.,"Depth-First Search (DFS) explores as far down a branch as possible before backtracking, while Breadth-First Search (BFS) explores all neighbors at the present depth prior to moving on to nodes at the next depth level.",
+2026-02-23T13:13:29,deepseek/deepseek-chat,3,Explain DFS and BFS in one sentence.,"DFS explores as far as possible along each branch before backtracking, while BFS explores all neighbors at the present depth before moving to the next level.",
+2026-02-23T13:13:34,gemini/gemini-2.5-flash,3,Explain DFS and BFS in one sentence.,"**DFS (Depth-First Search):** Explores a graph by going as deep as possible down each path before backtracking to explore other branches.
+
+**BFS (Breadth-First Search):** Explores a graph layer by layer, visiting all nodes at the current depth before moving on to the next depth level.",

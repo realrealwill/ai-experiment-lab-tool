@@ -1,0 +1,4 @@
+model_name,group_pos,avg_score
+deepseek/deepseek-chat,Early(1-24),0.7159166666666666
+deepseek/deepseek-chat,Middle(25-48),0.705
+deepseek/deepseek-chat,Late(49-71),0.6984782608695652
